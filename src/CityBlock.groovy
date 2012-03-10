@@ -27,7 +27,7 @@ class CityBlock {
 
     @Override
     boolean equals(Object o) {
-        o instanceof CityBlock && floorPlan.equals((CityBlock) o)
+        o instanceof CityBlock && floorPlan.flatten() == (((CityBlock) o).floorPlan).flatten()
     }
 
     @Override

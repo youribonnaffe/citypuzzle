@@ -34,4 +34,8 @@ class CityBlock {
     int hashCode() {
         return floorPlan.hashCode()
     }
+
+    char code(){
+        floorPlan.flatten().join().replaceAll('_', '')[0]
+    }
 }

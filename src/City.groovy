@@ -1,18 +1,55 @@
 class City {
 
-    int size = 3 //  7
-    Coordinate cityHall = new Coordinate(x: 1, y: 2)
+    int size = 7 //  7
+    Coordinate cityHall = new Coordinate(x: 1, y: 1)
     List<CityBlock> cityBlocks = [
+        new CityBlock(floorPlan: [
+            ['&', '&', '&', '_'],
+            ['_', '&', '&', '&'],
+            ['_', '&', '&', '_'],
+        ]),
+        new CityBlock(floorPlan: [
+            ['$', '$', '$', '$'],
+            ['_', '$', '$', '_'],
+        ]),
+        new CityBlock(floorPlan: [
+            ['9', '9'],
+            ['9', '9'],
+            ['9', '_']
+        ]),
+        new CityBlock(floorPlan: [
+            ['3', '3', '3', '3', '3'],
+        ]),
+        new CityBlock(floorPlan: [
+            ['2', '2', '2', '2'],
+        ]),
+        new CityBlock(floorPlan: [
+            ['7', '_'],
+            ['7', '7'],
+            ['7', '_']
+        ]),
         new CityBlock(floorPlan: [
             ['1', '_'],
             ['1', '1'],
             ['1', '_']
         ]),
         new CityBlock(floorPlan: [
-            ['2', '2'],
+            ['8', '_'],
+            ['8', '8'],
+            ['8', '_']
         ]),
         new CityBlock(floorPlan: [
-            ['3', '3'],
+            ['6', '6'],
+            ['6', '_'],
+        ]),
+        new CityBlock(floorPlan: [
+            ['4', '4'],
+        ]),
+        new CityBlock(floorPlan: [
+            ['5', '5'],
+        ]),
+        new CityBlock(floorPlan: [
+            ['0'],
         ])
     ]
 
@@ -49,11 +86,11 @@ class City {
         for (it in (0..4)) {
             for (row in (0..<size)) {
                 for (col in (0..<size)) {
-                    //println "row $row col $col"
+                    debug "row $row col $col"
                     if (isFree(row, col)) {
-                        //println "isFree"
+                        debug "isFree"
                         if (tryToPlaceCityBlock(candidate, row, col)) {
-                            //  println "placed"
+                           debug "placed"
                             return true
                         }
                     }
@@ -73,7 +110,7 @@ class City {
         boolean placed = true
         for (row in (0..<cityBlock.floorPlan.length)) {
             for (col in (0..<cityBlock.floorPlan[0].length)) {
-                //println "try row $row col $col"
+                //debug "try row $row col $col"
                 if (cityBlock.floorPlan[row][col] != '_' && floorPlan[y + row][x + col] != '_') {
                     placed = false
                 }
@@ -95,7 +132,7 @@ class City {
     }
 
     void remove(CityBlock cityBlock) {
-        char block = cityBlock.floorPlan.flatten().join().replaceAll('_','')[0]
+        char block = cityBlock.floorPlan.flatten().join().replaceAll('_', '')[0]
         for (row in (0..<size)) {
             for (col in (0..<size)) {
                 if (floorPlan[row][col] == block)
@@ -106,6 +143,53 @@ class City {
 
     @Override
     boolean equals(Object o) {
-        o instanceof City && floorPlan.flatten() == (((City) o).floorPlan).flatten()
+        return o instanceof City && floorPlan.flatten() == (((City) o).floorPlan).flatten()
+    }
+
+    @Override
+    int hashCode() {
+        return floorPlan.hashCode()
+    }
+
+    boolean nextPlace(CityBlock cityBlock) {
+        def candidate = cityBlock
+
+        def charBlock = cityBlock.floorPlan.flatten().join().replaceAll('_', '')[0]
+        def startRow, startCol
+
+        for (row in (0..<size)) {
+            for (col in (0..<size)) {
+                if (floorPlan[row][col] == charBlock) {
+                    remove(cityBlock)
+                    startRow = row
+                    startCol = col + 1
+                }
+            }
+        }
+        if (startCol >= size) {
+            startCol = 0
+            startRow++
+        }
+        if (startRow >= size)
+            return false
+
+        for (row in (startRow..<size)) {
+            for (col in (startCol..<size)) {
+                debug "next row $row col $col"
+                if (isFree(row, col)) {
+                     debug "next isFree"
+                    if (tryToPlaceCityBlock(candidate, row, col)) {
+                            debug "next placed"
+                        return true
+                    }
+                }
+            }
+            startCol = 0
+        }
+        false
+    }
+
+    void debug(def log) {
+        //println log
     }
 }

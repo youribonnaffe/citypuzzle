@@ -18,32 +18,67 @@ class CityPuzzle {
     }
 
     private static void solve(City city) {
-
+        def tries = []
         int nextBlock = 0
-        while (true) {
-            CityBlock block = city.cityBlocks[nextBlock]
-            boolean placed = city.place(block)
-            if (!placed) {
-                // backtrack
-                nextBlock--
-                city.remove(city.cityBlocks[nextBlock])
-                city.cityBlocks[nextBlock] = city.cityBlocks[nextBlock].rotate()
-            } else if (city.full() && notYetFound(city)) {
-                println "found $city"
-                solutions << city
-                nextBlock--
-                city.remove(city.cityBlocks[nextBlock])
-                city.cityBlocks[nextBlock] = city.cityBlocks[nextBlock].rotate()
-            } else {
-                nextBlock++
-            }
+        doSolve(city, nextBlock, tries)
+    }
+    static void debug(def log) {
+        //println log
+    }
+    private static void doSolve(City city, int nextBlock, List tries) {
+        CityBlock block = city.cityBlocks[nextBlock]
 
+        boolean placed = city.place(block)
+        if(!placed){
+            city.cityBlocks[nextBlock] = block = block.rotate()
+            placed = city.place(block)
         }
-        // take next available block
-        // place it
-        // if no place left, rotate it and try to place it again
-        // is solved ?
+        def original = block
+        //println tries
+        while (placed && tries.contains(city)) {
+            placed = city.nextPlace(block)
+            if(!placed){
+                city.cityBlocks[nextBlock] = block = block.rotate()
+                if(block == original)
+                    break
+                placed = city.place(block)
+            }
+            //println city
+            //println tries
+            debug "placed=$placed " + tries.contains(city)
+        }
+       // println block.code()
+       // println city
+        if (placed) {
+            if (city.full()) {
+                println "DONE !"
+                return
+            }
+            // we found one working, next
+            debug "next"
+            nextBlock++
+        } else {
+            tries << new City(floorPlan: deepCopy(city.floorPlan))
+            nextBlock--
+            CityBlock lastBlock = city.cityBlocks[nextBlock]
+            city.remove(lastBlock)
+            // backtrack
+            debug "backtrack"
+            //println tries.size()
+        }
+        if (nextBlock < 0)
+            return
+        doSolve(city, nextBlock, tries)
+    }
 
+    static char[][] deepCopy(char[][] chars) {
+        char[][] newChars = new char[chars.length][chars[0].length]
+        for (i in (0..<chars.length)) {
+            for (j in (0..<chars[0].length)) {
+                newChars[i][j] = chars[i][j]
+            }
+        }
+        newChars
     }
 
     static boolean notYetFound(City city) {

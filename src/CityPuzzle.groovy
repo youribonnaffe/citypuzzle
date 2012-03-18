@@ -4,6 +4,7 @@ class CityPuzzle {
 
     static void main(String[] args) {
         //blocks()
+        def t1 = System.currentTimeMillis()
         final city = new City()
         /*city.place(city.cityBlocks[0])
         println city
@@ -14,6 +15,7 @@ class CityPuzzle {
 
         solve(city)
         println city
+        println (System.currentTimeMillis() - t1)/1000
         //new City().cityBlocks.each { println it.rotate()}
     }
 
@@ -48,7 +50,7 @@ class CityPuzzle {
             debug "placed=$placed " + tries.contains(city)
         }
        // println block.code()
-       // println city
+        println city
         if (placed) {
             if (city.full()) {
                 println "DONE !"

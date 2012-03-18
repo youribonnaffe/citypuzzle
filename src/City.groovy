@@ -1,7 +1,7 @@
 class City {
 
     int size = 7 //  7
-    Coordinate cityHall = new Coordinate(x: 1, y: 1)
+    Coordinate cityHall = new Coordinate(x: 6, y: 1)
     List<CityBlock> cityBlocks = [
         new CityBlock(floorPlan: [
             ['&', '&', '&', '_'],
